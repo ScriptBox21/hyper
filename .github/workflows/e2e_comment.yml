@@ -14,14 +14,14 @@ jobs:
           WORKFLOW_RUN_INFO: ${{ toJSON(github.event.workflow_run) }}
         run: echo "$WORKFLOW_RUN_INFO"
       - name: Download Artifacts
-        uses: dawidd6/action-download-artifact@v2.15.0
+        uses: dawidd6/action-download-artifact@v2.16.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: nodejs.yml
           run_id: ${{ github.event.workflow_run.id }}
           name: e2e
       - name: Get PR number
-        uses: dawidd6/action-download-artifact@v2.15.0
+        uses: dawidd6/action-download-artifact@v2.16.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: nodejs.yml
@@ -46,11 +46,12 @@ jobs:
           IMG_MARKDOWN: ${{ join(fromJSON(steps.upload_screenshots.outputs.markdown_urls), '') }}
           MESSAGE: |
             Hi there,
+            Thank you for contributing to Hyper!
+            You can get the build artifacts from [here](https://nightly.link/{1}/actions/runs/{2}).
             Here are screenshots of Hyper built from this pr.
             {0}
-            Thank you for contributing to Hyper!
         with:
           type: create
           issue_number: ${{ steps.pr_num_reader.outputs.content }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          body: ${{ format(env.MESSAGE, env.IMG_MARKDOWN) }}
+          body: ${{ format(env.MESSAGE, env.IMG_MARKDOWN, github.repository, github.event.workflow_run.id) }}
